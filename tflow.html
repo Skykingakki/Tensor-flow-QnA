@@ -1,0 +1,86 @@
+<html>
+    <head>
+        <title>
+            QnA Tensorflow
+        </title>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <script src="https://code.jquery.com/jquery-3.5.1.min.js" integrity="sha256-9/aliU8dGd2tb6OSsuzixeV4y/faTqgFtohetphbbj0=" crossorigin="anonymous"></script>
+        <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs"> </script>
+        <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/qna"> </script>
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js" integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV" crossorigin="anonymous"></script>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js" integrity="sha384-LtrjvnR4Twt/qOuYxE721u19sVFLVSA4hf/rRt6PrZTmiPltdZcI7q7PXQBYTKyf" crossorigin="anonymous"></script>
+        <style>
+            .center{
+                text-align: center;
+            }
+        </style>
+    </head>
+    <body style = "background-color: #111010">
+        <script>
+            async function getAnswer(){
+
+                document.getElementById("loadingDiv").innerHTML = "<b>loading...</b>";
+                document.getElementById('resultTable').getElementsByTagName('tbody')[0].innerHTML = "";
+
+                // get passage and question
+                const passage = document.getElementById("questionTextArea").value;
+                const question = document.getElementById("questionTextBox").value;
+
+                const model = await qna.load();
+                const answers = await model.findAnswers(question, passage);
+
+                console.log(answers);
+
+                // answer comes in form of array with text and score as property of objects
+                // get table
+                var tbodyRef = document.getElementById('resultTable').getElementsByTagName('tbody')[0];
+                if(answers.length == 0){
+                    document.getElementById("loadingDiv").innerHTML = "<b>No result found</b>";
+                }
+                else{
+                    document.getElementById("loadingDiv").innerHTML = "<b>Check table for results</b>";
+                    answers.forEach(x => {
+                    var newRow = tbodyRef.insertRow();
+                    var answerCell = newRow.insertCell();
+                    var answerText = document.createTextNode(x.text);
+                    answerCell.appendChild(answerText);
+                    var scoreCell = newRow.insertCell();
+                    var scoreText = document.createTextNode(x.score);
+                    scoreCell.appendChild(scoreText);
+                })
+                }
+            }
+        </script>
+        <div style="background:transparent !important" class="container jumbotron">
+            <div class="starter-template text-center py-2 px-3">
+                <h1><span class="badge bg-secondary">QnA - Using Tensorflow.js</span></h1>
+                <h5>Developed by <a href="www.linkedin.com/in/lazycoderr">@lazycoderr</a></h5><br>
+                <h3><b>Enter a paragraph in Question passage and a Question relevant to that passage in Question.</b></h3>
+            </div>
+        <form action="JavaScript:getAnswer()">
+            <h3>Question passage:</h3>
+            <textarea id="questionTextArea" class="form-control" style="background-color:#99CAFC; height: 200px">Elon Reeve Musk FRS (/ˈiːlɒn/ EE-lon; born June 28, 1971) is a business magnate, industrial designer and engineer.[3] He is the founder, CEO, CTO and chief designer of SpaceX; early investor,[b] CEO and product architect of Tesla, Inc.; founder of The Boring Company; co-founder of Neuralink; and co-founder and initial co-chairman of OpenAI. He was elected a Fellow of the Royal Society (FRS) in 2018.[6][7] Also that year, he was ranked 25th on the Forbes list of The World's Most Powerful People,[8] and was ranked joint-first on the Forbes list of the Most Innovative Leaders of 2019.[9] A centi-billionaire,[10] Musk became the richest person in the world in January 2021.[11]
+                Musk was born to a Canadian mother and South African father and raised in Pretoria, South Africa. He briefly attended the University of Pretoria before moving to Canada when he was 17 to attend Queen's University. He transferred to the University of Pennsylvania two years later, where he received dual bachelor's degrees in economics and physics. He moved to California in 1995 to begin a Ph.D. in applied physics and material sciences at Stanford University, but dropped out after two days to pursue a business career. He co-founded Zip2, a web software company, which was acquired by Compaq for $307 million in 1999. Musk then founded X.com, an online bank. It merged with Confinity in 2000, which had launched PayPal the previous year and was subsequently bought by eBay for $1.5 billion in October 2002.
+                In May 2002, Musk founded SpaceX, an aerospace manufacturer and space transport services company, of which he is CEO and lead designer. He joined Tesla Motors, Inc. (now Tesla, Inc.), an electric vehicle manufacturer, in 2004, the year after it was founded, becoming its product architect that year and its CEO in 2008. In 2006, he helped create SolarCity, a solar energy services company (now a subsidiary of Tesla). In 2015, he co-founded OpenAI, a nonprofit research company that aims to promote friendly artificial intelligence. In July 2016, he co-founded Neuralink, a neurotechnology company focused on developing brain–computer interfaces. In December 2016, Musk founded The Boring Company, an infrastructure and tunnel construction company focused on tunnels optimized for electric vehicles. In addition to his primary business pursuits, he envisioned an open-source high-speed transportation system known as the Hyperloop based on the concept of a vactrain.</textarea>
+            <br>
+            <h3>Question:</h3>
+            <textarea id="questionTextBox" class="form-control" style="background-color:#99CAFC; height: 100px">What is Neuralink?</textarea>   
+            <br>         
+            <input type="submit" value="Search" class="btn btn-primary">
+            <span id="loadingDiv"></span>
+        </form>
+        <table id="resultTable" border="1" width="100%" class=" table table-striped center" style="background-color:#99CAFC">
+            <thead>
+                <tr>
+                    <th>Answer</th>
+                    <th>Possibility</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- table body  #242d32 -->
+            </tbody>
+        </table>
+        </div>
+    </body>
+</html>
